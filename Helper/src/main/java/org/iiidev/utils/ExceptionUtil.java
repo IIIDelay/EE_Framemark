@@ -24,6 +24,13 @@ public class ExceptionUtil {
         return Optional.ofNullable(in).map(CheckedFunction.exceptionWrapper(clazz, fc)::apply).orElse(null);
     }
 
+    /**
+     * accept
+     *
+     * @param in       in
+     * @param clazz    clazz
+     * @param consumer consumer
+     */
     public static <IN, EX extends Throwable> void accept(IN in, Class<EX> clazz, CheckedConsumer<IN, EX> consumer) {
         Optional.ofNullable(in).ifPresent(CheckedConsumer.exceptionWrapper(clazz,consumer)::accept);
     }
