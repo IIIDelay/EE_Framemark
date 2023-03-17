@@ -1,9 +1,7 @@
 package org.img.config;
 
-import io.vavr.control.Try;
 import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.iiidev.wrapper.CheckedFunction;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;

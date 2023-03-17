@@ -1,7 +1,7 @@
 package org.iiidev.utils;
 
-import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -21,6 +21,16 @@ public class AttrTransferUtil {
      */
     public static <IN, OUT> OUT safeGetter(IN in, Function<IN, OUT> getter) {
         return safeGetterElse(in, getter, null);
+    }
+
+    /**
+     * safeSetter
+     *
+     * @param in       in
+     * @param consumer consumer
+     */
+    public static <IN> void safeSetter(IN in, Consumer<IN> consumer) {
+        Optional.ofNullable(in).ifPresent(consumer::accept);
     }
 
     /**
