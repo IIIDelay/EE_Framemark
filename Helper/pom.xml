@@ -64,5 +64,10 @@
             <version>1.23</version>
         </dependency>
 
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.14</version>
+        </dependency>
     </dependencies>
 </project>

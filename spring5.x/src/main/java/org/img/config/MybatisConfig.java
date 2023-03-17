@@ -37,17 +37,13 @@ public class MybatisConfig {
         bean.setConfiguration(buildConfiguration());
         bean.setMapperLocations(buildResources(new PathMatchingResourcePatternResolver()::getResources,
                 IOException.class, "mapper/**/*Mapper.xml"));
-
-
         return bean;
     }
 
     private Resource[] buildResources(CheckedFunction<String, Resource[], IOException> function,
                                       Class<IOException> exClazz, String... localPath) {
-        return Arrays.stream(localPath).map(CheckedFunction.exceptionWrapper(exClazz, function)::apply).toArray(Resource[]::new);
+        return Arrays.stream(localPath).map(CheckedFunction.exceptionWrapper(exClazz, function)::apply).flatMap(Arrays::stream).toArray(Resource[]::new);
     }
-
-
 
     private Configuration buildConfiguration() {
         Configuration configuration = new Configuration();
