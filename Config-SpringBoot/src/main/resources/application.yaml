@@ -1,0 +1,19 @@
+redis:
+  standalone:
+    hostname: ${remote.learn}
+    port: 6379
+
+mysql:
+  driver: com.mysql.jdbc.Driver
+  url: jdbc:mysql://${remote.learn}:3306/note_learning
+  username: root
+  password: root
+
+pg:
+  driver: org.postgresql.Driver
+  url: jdbc:postgresql://${remote.learn}:5432/note_learning
+  username: postgres
+  password: root
+
+remote:
+  learn: 192.168.81.101

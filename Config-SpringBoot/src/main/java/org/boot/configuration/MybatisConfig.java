@@ -7,4 +7,5 @@ package org.boot.configuration;
  * @createTime 2023年03月16日 11:26:00
  */
 public class MybatisConfig {
+
 }
