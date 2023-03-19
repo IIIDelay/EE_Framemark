@@ -3,12 +3,15 @@ package org.boot.configuration;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.Lists;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.assertj.core.util.Sets;
 import org.boot.configuration.property.ConfigProperties;
 import org.iiidev.common.constant.CacheConstant;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
-import org.springframework.cache.support.CompositeCacheManager;
+import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
@@ -53,6 +56,7 @@ public class CacheConfig {
     private CacheManager simpleLocalCacheManger() {
         CaffeineCacheManager ccm = new CaffeineCacheManager();
         ccm.setCaffeine(Caffeine.newBuilder().maximumSize(2000).expireAfterAccess(Duration.ofMinutes(30)));
+        ccm.setCacheNames(Lists.newArrayList("slcm"));
         return ccm;
     }
 
@@ -64,10 +68,14 @@ public class CacheConfig {
      */
     @Bean
     public CacheManager compositeCacheManger(RedisConnectionFactory redisConnectionFactory) {
-        CompositeCacheManager compositeCacheManager = new CompositeCacheManager();
-        compositeCacheManager.setCacheManagers(Lists.newArrayList(redisCacheManager(redisConnectionFactory),
-                simpleLocalCacheManger()));
-        return compositeCacheManager;
+        SimpleCacheManager slm = new SimpleCacheManager();
+        CaffeineCache cache01 = new CaffeineCache("caffeineCache01",
+                Caffeine.newBuilder().maximumSize(10).expireAfterAccess(Duration.ofSeconds(600)).build(), false);
+        CaffeineCache cache02 = new CaffeineCache("caffeineCache02",
+                Caffeine.newBuilder().maximumSize(10).expireAfterAccess(Duration.ofSeconds(600)).build(), false);
+        Cache redis = redisCacheManager(redisConnectionFactory).getCache("rcTestDis");
+        slm.setCaches(Lists.newArrayList(redis, cache01,cache02));
+        return slm;
     }
 
     /**
@@ -89,6 +97,7 @@ public class CacheConfig {
                 .builder(redisConnectionFactory)
                 .cacheDefaults(config)
                 .transactionAware()
+                .initialCacheNames(Sets.newLinkedHashSet("rcTestDis"))
                 .build();
     }
 
