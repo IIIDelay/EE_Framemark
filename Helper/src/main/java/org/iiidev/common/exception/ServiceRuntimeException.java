@@ -42,6 +42,15 @@ public class ServiceRuntimeException extends RuntimeException{
     /**
      * of
      *
+     * @return ServiceRuntimeException
+     */
+    public static ServiceRuntimeException of(String message) {
+        return build(-1, message, null);
+    }
+
+    /**
+     * of
+     *
      * @param errorCode errorCode
      * @return ServiceRuntimeException
      */
