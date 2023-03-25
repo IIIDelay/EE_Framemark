@@ -11,8 +11,8 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.iiidev.common.annotation.RedisLimit;
 import org.iiidev.common.exception.ServiceRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
@@ -20,12 +20,10 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 /**
- * RedisLimitAspectjs
+ * RedisLimitAspects
  *
  * @author IIIDelay
  * @createTime 2023年03月25日 23:33:00
@@ -33,11 +31,16 @@ import java.util.Optional;
 @Component
 @Aspect
 @Slf4j
-public class RedisLimitAspectjs {
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+@EnableAspectJAutoProxy
+public class RedisLimitAspects {
 
-    @Pointcut("@within(org.iiidev.common.annotation.RedisLimit)")
+    /**
+     * 必须使用 stringRedisTemplate ,不能使用redisTemplate，否则lua脚本报错
+     */
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Pointcut("@annotation(org.iiidev.common.annotation.RedisLimit)")
     private void check() {
     }
 
@@ -47,7 +50,7 @@ public class RedisLimitAspectjs {
     public void init() {
         redisScript = new DefaultRedisScript<>();
         redisScript.setResultType(Long.class);
-        redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("rateLimiter.lua")));
+        redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/rateLimiter.lua")));
     }
 
     @Before("check()")
@@ -75,13 +78,13 @@ public class RedisLimitAspectjs {
 
             long expire = redisLimit.expire();
 
-            Long count = redisTemplate.execute(redisScript, Lists.newArrayList(key), String.valueOf(limit),
+            Long count = stringRedisTemplate.execute(redisScript, Lists.newArrayList(key), String.valueOf(limit),
                     String.valueOf(expire));
 
             log.info("Access try count is {} for key= {}", count, key);
             Optional.ofNullable(count).filter(val -> val != 0).orElseThrow(() -> {
                 log.debug("获取key失败，key为{}", key);
-                throw ServiceRuntimeException.of(redisLimit.msg());
+                return ServiceRuntimeException.of(redisLimit.msg());
             });
         });
     }

@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  * @createTime 2023年03月25日 23:30:00
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
+@Target({ElementType.METHOD,ElementType.TYPE})
 @Documented
 public @interface RedisLimit {
     /**
