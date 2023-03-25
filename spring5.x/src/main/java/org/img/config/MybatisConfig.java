@@ -1,6 +1,9 @@
 package org.img.config;
 
+import com.github.pagehelper.PageInterceptor;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.ibatis.logging.stdout.StdOutImpl;
+import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.Configuration;
 import org.iiidev.wrapper.CheckedFunction;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -35,7 +38,13 @@ public class MybatisConfig {
         bean.setConfiguration(buildConfiguration());
         bean.setMapperLocations(buildResources(new PathMatchingResourcePatternResolver()::getResources,
                 IOException.class, "mapper/**/*Mapper.xml"));
+        bean.setPlugins();
         return bean;
+    }
+
+    private Interceptor[] getInterceptors() {
+        PageInterceptor pageInterceptor = new PageInterceptor();
+        return ArrayUtils.add(new Interceptor[]{}, pageInterceptor);
     }
 
     private Resource[] buildResources(CheckedFunction<String, Resource[], IOException> function,
