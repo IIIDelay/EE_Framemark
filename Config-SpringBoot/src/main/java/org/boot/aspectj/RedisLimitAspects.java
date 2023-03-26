@@ -40,7 +40,7 @@ public class RedisLimitAspects {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
-    @Pointcut("@annotation(org.iiidev.common.annotation.RedisLimit)")
+    @Pointcut("@annotation(org.iiidev.common.annotation.RedisLimit)||@within(org.iiidev.common.annotation.RedisLimit)")
     private void check() {
     }
 

@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * ConfigProperties
@@ -35,13 +37,15 @@ public class ConfigProperties implements EnvironmentAware {
      * @param dbPrefix dbPrefix
      * @return DataSource
      */
-    public DataSource dataSourceChoose(String dbPrefix) {
+    public DataSource dataSourceChoose(String dbPrefix, Consumer<DataSource> extendAttr) {
         DruidDataSource dds = new DruidDataSource();
         if (StringUtils.isNotEmpty(dbPrefix)) {
             dds.setUsername(env.getProperty(dbPrefix + DataBaseConstant.USER_NAME));
             dds.setPassword(env.getProperty(dbPrefix + DataBaseConstant.PWD));
             dds.setUrl(env.getProperty(dbPrefix + DataBaseConstant.URL));
             dds.setDriverClassName(env.getProperty(dbPrefix + DataBaseConstant.DRIVER_CLASS));
+            // 除基本连接外的扩展属性
+            Optional.ofNullable(extendAttr).ifPresent(setter -> setter.accept(dds));
         }
         return dds;
     }
