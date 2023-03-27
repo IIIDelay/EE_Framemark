@@ -3,6 +3,10 @@ redis:
     hostname: ${remote.learn}
     port: 6379
 
+redission:
+  standalone:
+    server: redis://${remote.learn}:6379
+
 mysql:
   driver: com.mysql.jdbc.Driver
   url: jdbc:mysql://${remote.learn}:3306/note_learning

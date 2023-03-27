@@ -69,5 +69,12 @@
             <artifactId>hutool-all</artifactId>
             <version>5.8.14</version>
         </dependency>
+
+        <!--查看对象头信息-->
+        <dependency>
+            <groupId>org.openjdk.jol</groupId>
+            <artifactId>jol-core</artifactId>
+            <version>0.17</version>
+        </dependency>
     </dependencies>
 </project>

@@ -2,6 +2,7 @@ package org.boot.configuration.manger;
 
 import lombok.Getter;
 import org.boot.configuration.CoustomConfig;
+import org.boot.configuration.property.ConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,4 +17,7 @@ import org.springframework.stereotype.Component;
 public class ConfigManger {
     @Autowired
     private CoustomConfig coustomConfig;
+
+    @Autowired
+    private ConfigProperties configProperties;
 }

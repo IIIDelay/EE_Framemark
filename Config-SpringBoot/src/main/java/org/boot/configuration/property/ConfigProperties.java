@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.iiidev.common.constant.CacheConstant;
 import org.iiidev.common.constant.DataBaseConstant;
 import org.iiidev.utils.AttrTransferUtil;
+import org.redisson.config.Config;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.RedisConfiguration;
@@ -56,14 +57,33 @@ public class ConfigProperties implements EnvironmentAware {
      * @param deploymentMode deploymentMode
      * @return RedisConfiguration
      */
-    public RedisConfiguration redisConfiguration(CacheConstant.DeploymentMode deploymentMode) {
+    public RedisConfiguration redisConfigurationChoose(CacheConstant.DeploymentMode deploymentMode) {
         // 如果 deploymentMode 为单机模式则执行 redis单机配置
         if (Objects.equals(deploymentMode, CacheConstant.DeploymentMode.STAND_ALONE)) {
             RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
             configuration.setHostName(env.getProperty("redis." + deploymentMode.mode + ".hostname"));
-            configuration.setPort(AttrTransferUtil.safeGetterElse(env.getProperty("redis." + deploymentMode.mode + ".port"),
+            configuration.setPort(AttrTransferUtil.safeGetterElse(env.getProperty("redis." + deploymentMode.mode +
+                            ".port"),
                     Integer::parseInt, 0));
             return configuration;
+        }
+        return null;
+    }
+
+    /**
+     * redissionConfigChoose
+     *
+     * @param deploymentMode deploymentMode
+     * @param appendAttr     appendAttr
+     * @return Config
+     */
+    public Config redissionConfigChoose(CacheConstant.DeploymentMode deploymentMode, Consumer<Config> appendAttr) {
+        Config config;
+        if (Objects.equals(deploymentMode, CacheConstant.DeploymentMode.STAND_ALONE)) {
+            config = new Config();
+            config.useSingleServer().setAddress(env.getProperty("redission." + deploymentMode.mode + ".server"));
+            Optional.ofNullable(appendAttr).ifPresent(setter -> setter.accept(config));
+            return config;
         }
         return null;
     }

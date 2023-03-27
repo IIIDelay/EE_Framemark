@@ -103,7 +103,7 @@ public class CacheConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory(ConfigProperties configProperties) {
-        RedisConfiguration rc = configProperties.redisConfiguration(CacheConstant.DeploymentMode.STAND_ALONE);
+        RedisConfiguration rc = configProperties.redisConfigurationChoose(CacheConstant.DeploymentMode.STAND_ALONE);
 
         GenericObjectPoolConfig pool = new GenericObjectPoolConfig();
         pool.setMaxIdle(10);
