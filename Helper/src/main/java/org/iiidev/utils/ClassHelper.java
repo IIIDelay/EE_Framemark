@@ -1,6 +1,6 @@
 package org.iiidev.utils;
 
-import cn.hutool.core.util.URLUtil;
+import java.util.function.BiFunction;
 
 /**
  * ClassHelper
@@ -9,7 +9,17 @@ import cn.hutool.core.util.URLUtil;
  * @createTime 2023年03月17日 11:47:00
  */
 public class ClassHelper {
-    public static void main(String[] args) {
-        String decode = URLUtil.decode(null);
+    /**
+     * getForClassLoader
+     *
+     * @param getter getter
+     * @param <OUT>
+     * @return OUT
+     */
+    public static <OUT> OUT getForClassLoader(String in, BiFunction<ClassLoader, String,
+            OUT> getter) {
+        ClassLoader classLoader = ClassHelper.class.getClassLoader();
+        // 注意泛型顺序
+        return getter.apply(classLoader, in);
     }
 }

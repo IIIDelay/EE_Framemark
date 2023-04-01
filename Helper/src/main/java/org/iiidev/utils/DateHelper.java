@@ -19,7 +19,7 @@ public class DateHelper {
     /**
      * 默认时间处理格式
      */
-    private static final String DATA_FORMAT_DEFAULT = "yyyy-MM-dd HH::mm::ss";
+    private static final String DATA_FORMAT_DEFAULT = "yyyy-MM-dd HH:mm:ss";
 
     /**
      * convertDate
@@ -71,5 +71,15 @@ public class DateHelper {
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dataFormat);
         return localDateTime.format(formatter);
+    }
+
+    /**
+     * milliToLocalDateTime
+     *
+     * @param milli milli
+     * @return LocalDateTime
+     */
+    public static LocalDateTime milliToLocalDateTime(long milli) {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(milli), ZoneId.systemDefault());
     }
 }
