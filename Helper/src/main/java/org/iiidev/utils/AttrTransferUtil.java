@@ -66,6 +66,18 @@ public class AttrTransferUtil {
      * @return OUT
      */
     public static <IN, OUT> OUT safeGetter(IN in, Predicate<IN> valid, Function<IN, OUT> getter) {
-        return Optional.ofNullable(in).filter(valid).map(getter).orElse(null);
+        return safeGetterElse(in, valid, getter, null);
+    }
+
+    /**
+     * safeGetterElse
+     *
+     * @param in  in
+     * @param valid  valid
+     * @param getter getter
+     * @return OUT
+     */
+    public static <IN, OUT> OUT safeGetterElse(IN in, Predicate<IN> valid, Function<IN, OUT> getter, OUT defaultVal) {
+        return Optional.ofNullable(in).filter(valid).map(getter).orElse(defaultVal);
     }
 }
