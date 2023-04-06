@@ -1,10 +1,12 @@
 package org.boot.cache;
 
-import org.springframework.cache.caffeine.CaffeineCache;
+import org.iiidev.common.exception.ServiceRuntimeException;
+import org.springframework.cache.Cache;
 import org.springframework.cache.support.AbstractValueAdaptingCache;
-import org.springframework.data.redis.cache.RedisCache;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * AdaptorCacheManger
@@ -15,63 +17,88 @@ import java.util.concurrent.Callable;
 public class MultiLevelCache extends AbstractValueAdaptingCache {
     private String name;
 
-    private CaffeineCache localCache;
+    private Cache localCache;
 
-    private RedisCache remoteCache;
+    private Cache remoteCache;
 
-    public MultiLevelCache(boolean allowNullValues, CaffeineCache localCache, RedisCache remoteCache) {
+    private Class<?> valueType;
+
+    public MultiLevelCache(String name, boolean allowNullValues, Cache localCache, Cache remoteCache,
+                           Class<?> valueType) {
         super(allowNullValues);
+        this.name = name;
         this.localCache = localCache;
         this.remoteCache = remoteCache;
+        this.valueType = valueType;
     }
 
     @Override
     public String getName() {
-        return null;
+        return this.name;
     }
 
     @Override
     public Object getNativeCache() {
-        return null;
+        return this;
     }
 
     @Override
     public <T> T get(Object key, Callable<T> valueLoader) {
-        return null;
+        Lock lock = new ReentrantLock();
+        try {
+            Object lookup = lookup(key);
+            if (lock != null) {
+                return (T) lookup;
+            }
+            T call = valueLoader.call();
+            put(key, call);
+            return call;
+        } catch (Exception ex) {
+            throw new ServiceRuntimeException(ex);
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
     public void put(Object key, Object value) {
+        if (!isAllowNullValues() && value == null) {
+            return;
+        }
 
+        localCache.put(key, toStoreValue(value));
+
+        if (value == null) {
+            return;
+        }
+
+        // 入参传入rediscache已做config配置
+        remoteCache.put(key, toStoreValue(value));
     }
 
     @Override
     public void evict(Object key) {
-
+        remoteCache.evict(key);
+        localCache.evict(key);
     }
 
     @Override
     public void clear() {
-
+        remoteCache.clear();
+        localCache.clear();
     }
 
     @Override
     protected Object lookup(Object key) {
-        return null;
-    }
+        Object value = localCache.get(key, valueType);
+        if (value != null) {
+            return value;
+        }
 
-    @Override
-    public ValueWrapper putIfAbsent(Object key, Object value) {
-        return super.putIfAbsent(key, value);
-    }
-
-    @Override
-    public boolean evictIfPresent(Object key) {
-        return super.evictIfPresent(key);
-    }
-
-    @Override
-    public boolean invalidate() {
-        return super.invalidate();
+        value = remoteCache.get(key, valueType);
+        if (value != null) {
+            localCache.put(key, value);
+        }
+        return value;
     }
 }

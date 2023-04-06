@@ -10,7 +10,14 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.iiidev.entity.PmsCategory;
 import org.junit.jupiter.api.Test;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,24 +45,28 @@ public class TreeUtilTest {
             pmsCategory.setChildCategories(null);
             return pmsCategory;
         }).collect(Collectors.toList());
-        System.out.println("tiled = " + JSONUtil.toJsonStr(tiled));
 
         List<PmsCategory> build = TreeUtil.build(0L, collect, in -> Pair.of(in.getCatId(), in.getParentCid()),
                 PmsCategory::setChildCategories);
-        System.out.println("JSON.toJSONString(build) = " + JSONUtil.toJsonStr(build));
+
+        List<PmsCategory> result = getPmsCategories(build);
+        OutputStream outputStream = Files.newOutputStream(new File("result.json").toPath());
+        IOUtils.write( JSONUtil.toJsonStr(result).getBytes(StandardCharsets.UTF_8), outputStream);
+    }
+
+    private static List<PmsCategory> getPmsCategories(List<PmsCategory> build) {
+        List<PmsCategory> result = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            result.addAll(build);
+        }
+        return result;
     }
 
 
-    private void tiled01(List<PmsCategory> pmsCategories, List<PmsCategory> result) {
-        Optional.ofNullable(pmsCategories).orElse(Collections.emptyList()).stream().forEach(pmsCategory -> {
-            Optional.ofNullable(pmsCategory).ifPresent(pmsc -> {
-                result.add(pmsc);
-                if (CollectionUtils.isNotEmpty(pmsc.getChildCategories())) {
-                    result.addAll(pmsCategory.getChildCategories());
-                    result.forEach(pms -> pms.setChildCategories(null));
-                    this.tiled01(pmsCategory.getChildCategories(), result);
-                }
-            });
-        });
+    @Test
+    public void tiled01() throws IOException {
+        OutputStream outputStream = new FileOutputStream("result.json");
+
+        IOUtils.write("hello".getBytes(StandardCharsets.UTF_8), outputStream);
     }
 }

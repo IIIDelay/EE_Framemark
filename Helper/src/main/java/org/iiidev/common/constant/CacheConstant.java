@@ -7,6 +7,8 @@ package org.iiidev.common.constant;
  * @createTime 2023年03月18日 23:21:00
  */
 public interface CacheConstant {
+    String MULTI_LEVEL_CACHE = "multiLevel";
+
     /**
      * 分布式锁相关属性
      */

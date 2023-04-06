@@ -30,6 +30,11 @@ public class ServiceRuntimeException extends RuntimeException{
      */
     private ErrorCodeEnum ErrorCode;
 
+    public ServiceRuntimeException(Throwable cause) {
+        super(cause);
+        build(-1, cause.getMessage(), null);
+    }
+
     /**
      * of
      *
