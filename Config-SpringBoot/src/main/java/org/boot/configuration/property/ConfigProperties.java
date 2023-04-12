@@ -10,6 +10,7 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.RedisConfiguration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -63,8 +64,8 @@ public class ConfigProperties implements EnvironmentAware {
             RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
             configuration.setHostName(env.getProperty("redis." + deploymentMode.mode + ".hostname"));
             configuration.setPort(AttrTransferUtil.safeGetterElse(env.getProperty("redis." + deploymentMode.mode +
-                            ".port"),
-                    Integer::parseInt, 0));
+                    ".port"),
+                Integer::parseInt, 0));
             return configuration;
         }
         return null;
@@ -87,5 +88,4 @@ public class ConfigProperties implements EnvironmentAware {
         }
         return null;
     }
-
 }

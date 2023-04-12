@@ -1,0 +1,5 @@
+default:
+  corePoolSize: 3
+  maxPoolSize: 3
+  keepAliveSeconds: 1
+  queueCapacity: 3

@@ -15,4 +15,16 @@ import org.springframework.stereotype.Component;
 public class CoustomConfig {
     @Value("${swagger.docket.show.enable:false}")
     private boolean enableSwagger;
+
+    @Value("${default.corePoolSize:0}")
+    private int corePoolSize;
+
+    @Value("${default.maxPoolSize:0}")
+    private int maxPoolSize;
+
+    @Value("${default.keepAliveSeconds:0}")
+    private int keepAliveSeconds;
+
+    @Value("${default.queueCapacity:0}")
+    private int queueCapacity;
 }
