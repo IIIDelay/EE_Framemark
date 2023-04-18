@@ -27,4 +27,7 @@ public class CoustomConfig {
 
     @Value("${default.queueCapacity:0}")
     private int queueCapacity;
+
+    @Value("#{mybatis.package.locations}")
+    private String[] packages;
 }
