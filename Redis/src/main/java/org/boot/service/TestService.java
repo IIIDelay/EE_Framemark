@@ -12,13 +12,5 @@ import java.util.Collection;
  * @author IIIDelay
  * @createTime 2023年03月19日 12:30:00
  */
-@Service
 public class TestService {
-    @Autowired
-    private CacheManager cacheManager;
-
-    public void putCache() {
-        Collection<String> cacheNames = cacheManager.getCacheNames();
-        System.out.println("cacheNames = " + cacheNames);
-    }
 }

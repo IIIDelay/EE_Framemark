@@ -12,6 +12,12 @@ import org.iiidev.utils.AttrTransferUtil;
  * @createTime 2023年03月13日 22:14:00
  */
 public class StartergreFactory {
+    /**
+     * getPayStartergre
+     *
+     * @param startegreType startegreType
+     * @return IPayStartergre
+     */
     public IPayStartergre getPayStartergre(String startegreType) {
         String className = AttrTransferUtil.levelSafeGetter(startegreType, PayStartegreEnum::valueOf,
                 PayStartegreEnum::className);

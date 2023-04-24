@@ -2,6 +2,8 @@ package org.iiidev;
 
 import org.spring.common.IIIDevComponentScan;
 
+import java.util.HashMap;
+
 /**
  * AppConfiguration
  *
@@ -10,4 +12,8 @@ import org.spring.common.IIIDevComponentScan;
  */
 @IIIDevComponentScan("org.iiidev.service")
 public class AppConfiguration {
+    public static void main(String[] args) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("a", "b");
+    }
 }

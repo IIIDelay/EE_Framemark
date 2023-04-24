@@ -15,11 +15,13 @@ public class Ticket implements Runnable {
     @Override
     public void run() {
         while (true) {
-            if (count <= 0) {
-                return;
+            synchronized (Ticket.class) {
+                if (count <= 0) {
+                    return;
+                }
+                count--;
+                System.out.println(Thread.currentThread().getName() + "剩余: " + count + " 张票");
             }
-            count--;
-            System.out.println(Thread.currentThread().getName() + "剩余: " + count + " 张票");
         }
     }
 }

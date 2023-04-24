@@ -1,13 +1,13 @@
 <template>
-    <div>
-
-    </div>
+  <div>
+    <h3>
+      这是一个App.vue
+    </h3>
+  </div>
 </template>
 
 <script>
-export default {
-
-}
+export default {}
 </script>
 
 <style lang="scss" scoped>

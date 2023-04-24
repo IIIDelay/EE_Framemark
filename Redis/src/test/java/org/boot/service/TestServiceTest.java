@@ -1,7 +1,10 @@
 package org.boot.service;
 
+import org.boot.cache.MultiLevelCache;
+import org.iiidev.common.constant.CacheConstant;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -25,10 +28,10 @@ public class TestServiceTest {
 
     @Test
     public void testPutCache() {
-        System.out.println("getCacheNames : "+ cacheManager.getCacheNames());
-        Cache rcTestDis = cacheManager.getCache("rcTestDis");
-        rcTestDis.put("AAA", "BBB");
-
-        redisTemplate.opsForValue().set("temp", "tempVal");
+        MultiLevelCache cache = (MultiLevelCache) cacheManager.getCache(CacheConstant.MULTI_LEVEL_CACHE);
+        Cache.ValueWrapper valueWrapper = cache.get("aa");
+        cache.put("abcd: ", "--DD");
+        String s = cache.get("abcd: ", String.class);
+        System.out.println("s = " + s);
     }
 }

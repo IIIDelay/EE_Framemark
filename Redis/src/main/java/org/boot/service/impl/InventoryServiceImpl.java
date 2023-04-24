@@ -1,18 +1,12 @@
 package org.boot.service.impl;
 
-import com.alibaba.druid.pool.DruidDataSource;
 import org.boot.service.InventoryService;
-import org.iiidev.common.annotation.RedisLimit;
 import org.iiidev.utils.AttrTransferUtil;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.test.context.ActiveProfiles;
-
-import javax.sql.DataSource;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * InventoryServiceImpl
@@ -26,18 +20,15 @@ public class InventoryServiceImpl implements InventoryService {
     private RedisTemplate<Object, Object> redisTemplate;
 
     @Autowired
-    private CacheManager cacheManager;
+    private RedissonClient redissonClient;
 
     @Override
-    @RedisLimit(key = "classRedisList")
     public String sale() {
-        DataSource dataSource = new DruidDataSource();
+        RLock rLock = redissonClient.getLock("IIIDev-Lock");
 
-        Lock lock = new ReentrantLock();
         String message;
         try {
-            lock.lock();
-
+            rLock.lock();
             // 1. 查询库存信息
             Integer inventory = AttrTransferUtil.safeGetterElse((String) redisTemplate.opsForValue().get("inventory"),
                     Integer::valueOf, 0);
@@ -51,7 +42,10 @@ public class InventoryServiceImpl implements InventoryService {
                 message = "库存清空，扣减失败qaq";
             }
         } finally {
-            lock.unlock();
+            // 判断是只能删除属于自己的key，不能删除别人的
+            if (rLock.isLocked() && rLock.isHeldByCurrentThread()) {
+                rLock.unlock();
+            }
         }
         return message;
     }

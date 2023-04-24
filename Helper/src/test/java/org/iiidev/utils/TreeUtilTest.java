@@ -1,16 +1,13 @@
 package org.iiidev.utils;
 
-import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.iiidev.entity.PmsCategory;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,9 +16,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -39,7 +34,7 @@ public class TreeUtilTest {
         List<PmsCategory> pmsCategories = JSONObject.parseObject(cateJson, new TypeReference<List<PmsCategory>>() {
         });
         List<PmsCategory> tiled =
-        TreeUtil.tiled(pmsCategories, PmsCategory::getChildCategories,
+            TreeUtil.tiled(pmsCategories, PmsCategory::getChildCategories,
                 pmsCategory -> pmsCategory.setChildCategories(null));
         List<PmsCategory> collect = tiled.stream().distinct().map(pmsCategory -> {
             pmsCategory.setChildCategories(null);
@@ -47,11 +42,11 @@ public class TreeUtilTest {
         }).collect(Collectors.toList());
 
         List<PmsCategory> build = TreeUtil.build(0L, collect, in -> Pair.of(in.getCatId(), in.getParentCid()),
-                PmsCategory::setChildCategories);
+            PmsCategory::setChildCategories);
 
         List<PmsCategory> result = getPmsCategories(build);
         OutputStream outputStream = Files.newOutputStream(new File("result.json").toPath());
-        IOUtils.write( JSONUtil.toJsonStr(result).getBytes(StandardCharsets.UTF_8), outputStream);
+        IOUtils.write(JsonUtil.objToStr(result).getBytes(StandardCharsets.UTF_8), outputStream);
     }
 
     private static List<PmsCategory> getPmsCategories(List<PmsCategory> build) {

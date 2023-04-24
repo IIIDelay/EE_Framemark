@@ -1,4 +1,4 @@
-package org.boot.controller;
+package org.boot.service.controller;
 
 import org.boot.service.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;

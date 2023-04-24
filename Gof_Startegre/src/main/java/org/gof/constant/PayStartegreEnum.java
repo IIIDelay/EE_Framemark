@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
  */
 @AllArgsConstructor
 public enum PayStartegreEnum {
-    ALI_PAY(""), WE_CHAT_PAY(""), UNION_PAY("");
+    ALI_PAY("ali_pay"), WE_CHAT_PAY("wechat_pay"), UNION_PAY("union_pay");
     private String className;
 
     public String className() {

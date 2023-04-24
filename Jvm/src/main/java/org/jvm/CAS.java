@@ -13,11 +13,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CAS {
     private int i = 0;
     private AtomicInteger atomicInteger = new AtomicInteger(0);
+
     public static void main(String[] args) {
         CAS cas = new CAS();
         List<Thread> ts = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
-            ts.add(new Thread(()-> {
+            ts.add(new Thread(() -> {
                 for (int i1 = 0; i1 < 10000; i1++) {
                     cas.safeCount();
                     cas.count();

@@ -16,8 +16,7 @@ public class ClassHelper {
      * @param <OUT>
      * @return OUT
      */
-    public static <OUT> OUT getForClassLoader(String in, BiFunction<ClassLoader, String,
-            OUT> getter) {
+    public static <OUT> OUT getForClassLoader(String in, BiFunction<ClassLoader, String, OUT> getter) {
         ClassLoader classLoader = ClassHelper.class.getClassLoader();
         // 注意泛型顺序
         return getter.apply(classLoader, in);

@@ -1,5 +1,11 @@
 package org.jvm;
 
+import io.vavr.control.Try;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 /**
  * T
  *
@@ -9,13 +15,16 @@ package org.jvm;
 public class T {
     public static void main(String[] args) {
         Ticket target = new Ticket();
-        new Thread(target, "A: ").start();
-        new Thread(target, "B: ").start();
-        new Thread(target, "C: ").start();
-        new Thread(target, "D: ").start();
-        new Thread(target, "E: ").start();
-        new Thread(target, "F: ").start();
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
+        executorService.execute(target);
+        executorService.execute(target);
+        executorService.execute(target);
+        executorService.execute(target);
+        executorService.execute(target);
 
+        executorService.shutdown();
+
+        Try.run(() -> TimeUnit.SECONDS.sleep(10));
         System.out.println("end...");
     }
 }

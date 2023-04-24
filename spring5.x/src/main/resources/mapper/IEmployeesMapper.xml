@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace约定为接口的全限定名-->
+<mapper namespace="org.img.mapper.IEmployeesMapper">
+    <insert id="insertEmps">
+        insert into tb_employees values
+        <foreach collection="tbEmployees" item="emp" separator=",">
+            (#{emp.employeeId},#{emp.firstName},
+            #{emp.lastName},#{emp.email},#{emp.phoneNumber},#{emp.hireDate},
+            #{emp.jobId},#{emp.salary},#{emp.commissionPct},#{emp.managerId},
+            #{emp.departmentId})
+        </foreach>
+    </insert>
+
+    <select id="selectEmps" resultType="org.img.entity.TbEmployees">
+        select * from tb_employees
+    </select>
+</mapper>
